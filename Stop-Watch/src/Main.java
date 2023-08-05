@@ -3,7 +3,7 @@ import java.awt.*;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.util.concurrent.Flow;
+
 
 public class Main {
     private static JFrame frame = new JFrame();
@@ -16,6 +16,7 @@ public class Main {
     static Color bgColor = new Color(9,27,49);
     static Color foregroundColor = new Color(23,244,203);
     static Font timeFont = new Font("Tahoma",Font.BOLD,140);
+    private static Timer timer;
     private void stopwatch(){
         Color foregroundColor = new Color(23,244,203);
         timelabel.setForeground(foregroundColor);
@@ -23,6 +24,9 @@ public class Main {
         timelabel.setFont(timeFont);
         timelabel.setBounds(80,15,750,450);
         frame.add(timelabel);
+    }
+    private void stopTimer(){
+        timer.stop();
     }
     public void layout(){
 
@@ -56,7 +60,6 @@ public class Main {
         reset.setFont(new Font("Tahoma",Font.PLAIN,15));
         reset.setBounds(470,400,100,30);
         frame.add(reset);
-
 
         // exit button
         JButton exit = new JButton(){
