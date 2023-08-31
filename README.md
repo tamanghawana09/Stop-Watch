@@ -1,5 +1,5 @@
 # Stop-Watch
-Stop watch made by using java swing component.
+<i>( Stop watch made by using java swing component. )<i>
 
 Here is the preview of the stopwatch
 <hr>
