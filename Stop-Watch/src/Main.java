@@ -5,7 +5,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
 
-public class Main {
+public class Main{
     private static JFrame frame = new JFrame();
     private static JLabel timelabel = new JLabel();
     private static JButton start = new JButton();
@@ -16,6 +16,8 @@ public class Main {
     static Color bgColor = new Color(9,27,49);
     static Color foregroundColor = new Color(23,244,203);
     static Font timeFont = new Font("Tahoma",Font.BOLD,140);
+    private long startTime = 0;
+    private boolean running;
     private static Timer timer;
     private void stopwatch(){
         Color foregroundColor = new Color(23,244,203);
@@ -24,12 +26,55 @@ public class Main {
         timelabel.setFont(timeFont);
         timelabel.setBounds(80,15,750,450);
         frame.add(timelabel);
+        start.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                startTimer();
+            }
+        });
     }
-    private void stopTimer(){
-        timer.stop();
-    }
-    public void layout(){
+    private void startTimer(){
+        startTime = System.currentTimeMillis() - (running ? startTime : 0);
+        running = true;
 
+        Thread updateThread = new Thread(() -> {
+            while(running){
+                long currentTime = System.currentTimeMillis() - startTime;
+                updateTimer(currentTime);
+                try{
+                    Thread.sleep(1000);
+
+                }catch(InterruptedException e){
+                    e.printStackTrace();
+                }
+            }
+
+        });
+        updateThread.setDaemon(true);
+        updateThread.start();
+
+    }
+
+    private void updateTimer(long currentTime){
+        long seconds = (currentTime/1000)%60;
+        long minutes = (currentTime/(1000*60)) % 60;
+        long hours = currentTime / (1000*60*60);
+
+        String time = String.format("%02d:%02d:%02d",hours,minutes,seconds);
+        timelabel.setText(time);
+    }
+    private void resetTimer(){
+        running = false;
+        startTime = 0;
+        updateTimer(0);
+    }
+
+    private void stopTimer(){
+       running = false;
+    }
+
+
+    public void layout(){
         frame.getContentPane().setBackground(bgColor);
         frame.setSize(800,500);
         frame.setLocation(400,200);
@@ -79,14 +124,29 @@ public class Main {
             }
         });
 
+        reset.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                resetTimer();
+            }
+        });
+
+        stop.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                stopTimer();
+            }
+        });
         frame.setLayout(null);
         frame.setVisible(true);
         container.add(frame);
+
     }
 
     public static void main(String[] args) {
         Main obj = new Main();
         obj.stopwatch();
         obj.layout();
+
     }
 }
